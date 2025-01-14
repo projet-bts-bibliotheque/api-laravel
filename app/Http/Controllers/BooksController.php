@@ -2,32 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookStatus;
 use App\Models\Books;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class BooksController extends Controller
 {
-    // Récupérer la liste de tous les livres.
-    public function index() {
-        $books = Books::all();
-        return response()->json($books);
-    }
 
-    // Récupérer le livre avec l'ID passé en paramètre.
-    public function show($id) {
-        $book = Books::where('isbn', '=', $id)->firstOr(function () {
-            return response()->json([
-                'message' => 'Book not found.'
-            ], 404);
+    private function getBook($id) {
+        return Books::where('isbn', '=', $id)->firstOr(function () {
+            return BookStatus::BOOK_NOT_FOUND;
         });
-
-        return response()->json($book);
     }
 
-    // Créer un nouveau livre dans la bdd.
-    public function store(Request $request) {
+    private function validate($request) {
         $validator = Validator::make($request->all(), [
             'isbn' => 'required|unique:books|string|max:255',
             'title' => 'required|string|max:255',
@@ -39,8 +28,32 @@ class BooksController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return $validator->errors();
         }
+
+        return true;
+    }
+
+    // Récupérer la liste de tous les livres.
+    public function index() {
+        $books = Books::all();
+        return response()->json($books);
+    }
+
+    // Récupérer le livre avec l'ID passé en paramètre.
+    public function show($id) {
+        $book = $this->getBook($id);
+        if($book == BookStatus::BOOK_NOT_FOUND) return response()->json([
+            "message" => "Book not found"
+        ], 404);
+
+        return response()->json($book);
+    }
+
+    // Créer un nouveau livre dans la bdd.
+    public function store(Request $request) {
+        $validated = $this->validate($request);
+        if(!$validated) return response()->json($validated, 400);
 
         $book = Books::create($request->all());
         return response()->json($book, 201);
@@ -48,37 +61,25 @@ class BooksController extends Controller
 
 
     Public function update(Request $request, $id){
-        $validator = Validator::make($request->all(), [
-            'isbn' => 'required|unique:books|string|max:255',
-            'title' => 'required|string|max:255',
-            'author' => 'required|integer|max:255',
-            'editor' => 'required|integer|max:255',
-            'keyword' => 'required|integer|max:255',
-            'summary' => 'required|string|max:500',
-            'publish_year' => 'required|integer|min:0|max:9999',
-        ]);
+        $validated = $this->validate($request);
+        if(!$validated) return response()->json($validated, 400);
 
-        if($validator->fails()){
-            return response()->json($validator->errors(), 400)
-        }
+        $book = $this->getBook($id);
+        if($book == BookStatus::BOOK_NOT_FOUND) return response()->json([
+            "message" => "Book not found"
+        ], 404);
 
-        $book = Books::where('isbn', '=', $id)->firstOr(function () {
-            return response()->json([
-                'message' => 'Book not found.'
-            ], 404);
-        });
+        Books::where("isbn", "=", $id)->update($request->all());
 
-        $book->update($request->all());
-
-        return response()->json($book, 200);
+        return response()->json($this->getBook($id));
     }
 
     public function destroy($id) {
-        $book = Books::where('isbn', '=', $id)->firstOr(function () {
-            return response()->json([
-                'message' => 'Book not found.'
-            ], 404);
-        });
+        $book = $this->getBook($id);
+        if($book == BookStatus::BOOK_NOT_FOUND) return response()->json([
+            "message" => "Book not found"
+        ], 404);
+
         $book->delete();
 
         return response()->json([
