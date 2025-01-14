@@ -45,4 +45,44 @@ class BooksController extends Controller
         $book = Books::create($request->all());
         return response()->json($book, 201);
     }
+
+
+    Public function update(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'isbn' => 'required|unique:books|string|max:255',
+            'title' => 'required|string|max:255',
+            'author' => 'required|integer|max:255',
+            'editor' => 'required|integer|max:255',
+            'keyword' => 'required|integer|max:255',
+            'summary' => 'required|string|max:500',
+            'publish_year' => 'required|integer|min:0|max:9999',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400)
+        }
+
+        $book = Books::where('isbn', '=', $id)->firstOr(function () {
+            return response()->json([
+                'message' => 'Book not found.'
+            ], 404);
+        });
+
+        $book->update($request->all());
+
+        return response()->json($book, 200);
+    }
+
+    public function destroy($id) {
+        $book = Books::where('isbn', '=', $id)->firstOr(function () {
+            return response()->json([
+                'message' => 'Book not found.'
+            ], 404);
+        });
+        $book->delete();
+
+        return response()->json([
+            'message' => 'The book has been deleted.'
+        ], 200);
+    }
 }
