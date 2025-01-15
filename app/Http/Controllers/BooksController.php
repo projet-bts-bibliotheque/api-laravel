@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\BookStatus;
+use Enums\Status;
 use App\Models\Books;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,7 +12,7 @@ class BooksController extends Controller
 
     private function getBook($id) {
         return Books::where('isbn', '=', $id)->firstOr(function () {
-            return BookStatus::BOOK_NOT_FOUND;
+            return Status::NOT_FOUND;
         });
     }
 
@@ -43,7 +43,7 @@ class BooksController extends Controller
     // Récupérer le livre avec l'ID passé en paramètre.
     public function show($id) {
         $book = $this->getBook($id);
-        if($book == BookStatus::BOOK_NOT_FOUND) return response()->json([
+        if($book == Status::NOT_FOUND) return response()->json([
             "message" => "Book not found"
         ], 404);
 
@@ -55,6 +55,16 @@ class BooksController extends Controller
         $validated = $this->validate($request);
         if(!$validated) return response()->json($validated, 400);
 
+        $book = $this->getBook($request->isbn);
+        if($book != Status::NOT_FOUND) return response()->json([
+            'message' => 'Book with ISBN already exists.'
+        ], 409);
+
+        $author = AuthorsController::getAuthor($request->author);
+        if($author == Status::NOT_FOUND) return response()->json([
+            'message' => "Author not found"
+        ], 404);
+
         $book = Books::create($request->all());
         return response()->json($book, 201);
     }
@@ -65,7 +75,7 @@ class BooksController extends Controller
         if(!$validated) return response()->json($validated, 400);
 
         $book = $this->getBook($id);
-        if($book == BookStatus::BOOK_NOT_FOUND) return response()->json([
+        if($book == Status::NOT_FOUND) return response()->json([
             "message" => "Book not found"
         ], 404);
 
@@ -76,7 +86,7 @@ class BooksController extends Controller
 
     public function destroy($id) {
         $book = $this->getBook($id);
-        if($book == BookStatus::BOOK_NOT_FOUND) return response()->json([
+        if($book == Status::NOT_FOUND) return response()->json([
             "message" => "Book not found"
         ], 404);
 

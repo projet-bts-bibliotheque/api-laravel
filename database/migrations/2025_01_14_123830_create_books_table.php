@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("title");
 
             $table->integer("author");
-            //$table->foreign("author")->references("id")->on("authors");
+            $table->foreign("author")->references("id")->on("authors");
 
             $table->integer("editor");
             //$table->foreign("editor")->references("id")->on("editors");
