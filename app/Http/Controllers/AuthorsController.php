@@ -37,12 +37,12 @@ class AuthorsController extends Controller
 
     // Récupérer le livre avec l'ID passé en paramètre.
     public function show($id) {
-        $book = $this->getAuthor($id);
-        if($book == Status::NOT_FOUND) return response()->json([
+        $author = $this->getAuthor($id);
+        if($author == Status::NOT_FOUND) return response()->json([
             "message" => "Author not found"
         ], 404);
 
-        return response()->json($book);
+        return response()->json($author);
     }
 
     // Créer un nouvel auteur dans la bdd.
@@ -50,35 +50,35 @@ class AuthorsController extends Controller
         $validated = $this->validate($request);
         if(!$validated) return response()->json($validated, 400);
 
-        $book = Authors::create($request->all());
-        return response()->json($book, 201);
+        $author = Authors::create($request->all());
+        return response()->json($author, 201);
     }
 
 
-    Public function update(Request $request, $id){
+    public function update(Request $request, $id){
         $validated = $this->validate($request);
         if(!$validated) return response()->json($validated, 400);
 
-        $book = $this->getAuthor($id);
-        if($book == Status::NOT_FOUND) return response()->json([
-            "message" => "Book not found"
+        $author = $this->getAuthor($id);
+        if($author == Status::NOT_FOUND) return response()->json([
+            "message" => "Author not found"
         ], 404);
 
-        Authors::where("id", "=", $id)->update($request->all());
+        $author->update($request->all());
 
         return response()->json($this->getAuthor($id));
     }
 
-    public function destroy($id) {
-        $book = $this->getAuthor($id);
-        if($book == Status::NOT_FOUND) return response()->json([
-            "message" => "Book not found"
+    public function destroyOther($id) {
+        $author = $this->getAuthor($id);
+        if($author == Status::NOT_FOUND) return response()->json([
+            "message" => "Author not found"
         ], 404);
 
-        $book->delete();
+        $author->delete();
 
         return response()->json([
-            'message' => 'The book has been deleted.'
+            'message' => 'The author has been deleted.'
         ], 200);
     }
 }

@@ -5,22 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Books extends Model
+class Editors extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
 
-    protected $table = 'books';
+    protected $table = 'editors';
     protected $fillable = [
-        'isbn',
-        'title',
+        'name',
+        'address',
         'thumbnail',
-        'author',
-        'editor',
-        'keyword',
-        'rating',
-        'summary',
-        'publish_year'
     ];
 }

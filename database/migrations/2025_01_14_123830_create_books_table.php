@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->string("isbn")->primary()->unique();
             $table->string("title");
+            $table->string("thumbnail");
 
             $table->integer("author");
             $table->foreign("author")->references("id")->on("authors");
 
             $table->integer("editor");
-            //$table->foreign("editor")->references("id")->on("editors");
+            $table->foreign("editor")->references("id")->on("editors");
 
             $table->integer("keyword");
             //$table->foreign("keyword")->references("id")->on("keywords");
