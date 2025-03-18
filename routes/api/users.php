@@ -22,8 +22,9 @@ Route::controller(AuthController::class)->group(function() {
     Route::middleware("auth:sanctum")->group(function() {
         Route::get("/me", "me");
         Route::delete("/me", "delete");
+        Route::put("/me", "update");
 
-        Route::post('/email/verification-notification', "sendNotification")->middleware(['throttle:6,1'])->name('verification.send');
+        Route::post('/email/verification-notification', "sendVerifyEmail")->middleware(['throttle:6,1'])->name('verification.send');
         Route::get('/email/verify/{id}/{hash}', "verifyEmail")->name('verification.verify');
 
         Route::middleware("isStaff")->group(function() {
@@ -32,8 +33,8 @@ Route::controller(AuthController::class)->group(function() {
         });
 
         Route::middleware("isAdmin")->group(function() {
-            Route::put("/users/{id}", "update");
-            Route::delete("/users/{id}", "destroyOther");
+            Route::put("/users/{id}", "updateOther");
+            Route::delete("/users/{id}", "deleteOther");
         });
     });
 });

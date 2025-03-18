@@ -28,11 +28,18 @@ class AuthController extends Controller {
         return response()->json($users);
     }
 
+    public function me(Request $request) {
+        return $request->user();
+    }
+
     public function register(Request $request) {
         $validate = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
         ]);
 
         if ($validate->fails()) {
@@ -42,7 +49,8 @@ class AuthController extends Controller {
         }
 
         $user = User::create([
-            'name' => $request['name'],
+            'first_name' => $request['first_name'],
+            'last_name' => $request['last_name'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
@@ -57,8 +65,7 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function login(Request $request)
-    {
+    public function login(Request $request) {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login details'
@@ -75,6 +82,74 @@ class AuthController extends Controller {
         ]);
     }
 
+    public function updateOther(Request $request, $id) {
+        $validate = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'role' => 'required|integer',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => $validate->errors()
+            ], 400);
+        }
+
+        $user = $this->getUser($id);
+        if($user == Status::NOT_FOUND) return response()->json([
+            "message" => "User not found"
+        ], 404);
+
+        $user->update([
+            'first_name' => $request['first_name'],
+            'last_name' => $request['last_name'],
+            'email' => $request['email'],
+            'address' => $request['address'],
+            'phone' => $request['phone'],
+            'role' => $request['role'],
+        ]);
+
+        event(new Registered($user));
+
+        return response()->json([
+            'message' => 'The user has been updated.'
+        ], 200);
+    }
+
+    public function update(Request $request) {
+        $validate = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => $validate->errors()
+            ], 400);
+        }
+
+        $user = $request->user();
+        $user->update([
+            'first_name' => $request['first_name'],
+            'last_name' => $request['last_name'],
+            'email' => $request['email'],
+            'address' => $request['address'],
+            'phone' => $request['phone'],
+        ]);
+
+        event(new Registered($user));
+
+        return response()->json([
+            'message' => 'The user has been updated.'
+        ], 200);
+    }
+    
     public function forgotPassword(Request $request) {
         $validate = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
@@ -135,12 +210,7 @@ class AuthController extends Controller {
                     : response()->json(['message' => __($status)], 400);
     }
 
-    public function me(Request $request)
-    {
-        return $request->user();
-    }
-
-    public function sendNotification (Request $request) {
+    public function sendVerifyEmail (Request $request) {
         $request->user()->sendEmailVerificationNotification();
     
         return back()->with('message', 'Verification link sent!');
@@ -152,7 +222,7 @@ class AuthController extends Controller {
         return response()->json(['message' => 'Email verified']);
     }
 
-    public function destroyOther(Request $request, $id) {
+    public function deleteOther(Request $request, $id) {
         $user = $this->getUser($id);
         if($user == Status::NOT_FOUND) return response()->json([
             "message" => "User not found"
