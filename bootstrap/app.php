@@ -9,7 +9,7 @@ use App\Http\Middleware\ForceJsonHeader;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         api: __DIR__.'/../routes/api/index.php',
-        health: '/up',
+        health: '/status',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(ForceJsonHeader::class);
