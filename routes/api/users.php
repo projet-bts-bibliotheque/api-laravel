@@ -18,7 +18,6 @@ Route::controller(AuthController::class)->group(function() {
     Route::post("/forgot-password", "forgotPassword");
     Route::post("/reset-password", "resetPassword");
 
-
     Route::middleware("auth:sanctum")->group(function() {
         Route::get("/me", "me");
         Route::delete("/me", "delete");

@@ -53,6 +53,8 @@ class AuthController extends Controller {
             'last_name' => $request['last_name'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
+            'address' => $request['address'],
+            'phone' => $request['phone'],
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -86,7 +88,7 @@ class AuthController extends Controller {
         $validate = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
             'role' => 'required|integer',
@@ -103,14 +105,13 @@ class AuthController extends Controller {
             "message" => "User not found"
         ], 404);
 
-        $user->update([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'address' => $request['address'],
-            'phone' => $request['phone'],
-            'role' => $request['role'],
-        ]);
+        if ($request['email'] !== $user->email && User::where('email', $request['email'])->exists()) {
+            return response()->json([
+                'message' => 'The provided email is already in use by another account.'
+            ], 400);
+        }
+
+        $user->update($request->all());
 
         event(new Registered($user));
 
@@ -123,7 +124,7 @@ class AuthController extends Controller {
         $validate = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
         ]);
@@ -135,6 +136,13 @@ class AuthController extends Controller {
         }
 
         $user = $request->user();
+
+        if ($request['email'] !== $user->email && User::where('email', $request['email'])->exists()) {
+            return response()->json([
+                'message' => 'The provided email is already in use by another account.'
+            ], 400);
+        }
+
         $user->update([
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],

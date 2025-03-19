@@ -23,8 +23,9 @@ class BooksController extends Controller
             'thumbnails' => 'required|string|max:255',
             'author' => 'required|integer|max:255',
             'editor' => 'required|integer|max:255',
-            'rating' => 'required|integer|min:0|max:5',
-            'keyword' => 'required|integer|max:255',
+            'average_rating' => 'required|numeric|min:0|max:5',
+            'ratings_count' => 'required|integer|min:0',
+            'keyword' => 'required|array',
             'summary' => 'required|string|max:500',
             'publish_year' => 'required|integer|min:0|max:9999',
         ]);

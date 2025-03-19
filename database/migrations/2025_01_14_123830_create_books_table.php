@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string("isbn")->primary()->unique();
             $table->string("title");
             $table->string("thumbnail");
+            $table->float("average_rating");
+            $table->integer("ratings_count");
 
             $table->integer("author");
             $table->foreign("author")->references("id")->on("authors");
@@ -22,8 +24,7 @@ return new class extends Migration
             $table->integer("editor");
             $table->foreign("editor")->references("id")->on("editors");
 
-            $table->integer("keyword");
-            //$table->foreign("keyword")->references("id")->on("keywords");
+            $table->json("keywords");
 
             $table->text("summary");
             $table->integer("publish_year");

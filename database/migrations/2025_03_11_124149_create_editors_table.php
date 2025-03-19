@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('editors', function (Blueprint $table) {
             $table->id()->unique();
             $table->string("name");
-            $table->string("address");
-            $table->string("thumbnail");
         });
     }
 

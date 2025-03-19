@@ -18,8 +18,6 @@ class EditorsController extends Controller
     private function validate($request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
-            'address' => 'required|string|between:2,100',
-            'thumbnail' => 'required|string|between:2,100',
         ]);
 
         if($validator->fails()) {

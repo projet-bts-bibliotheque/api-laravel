@@ -16,11 +16,16 @@ class Books extends Model
         'isbn',
         'title',
         'thumbnail',
+        'average_rating',
+        'ratings_count',
         'author',
         'editor',
-        'keyword',
-        'rating',
+        'keywords',
         'summary',
         'publish_year'
+    ];
+
+    protected $casts = [
+        'keywords' => 'array'
     ];
 }
