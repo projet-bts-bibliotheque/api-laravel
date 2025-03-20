@@ -7,15 +7,29 @@ use App\Models\Books;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * Gère les opérations CRUD pour les livres
+ */
 class BooksController extends Controller
 {
-
+    /**
+     * Récupère un livre par son ISBN
+     * 
+     * @param string $id ISBN du livre à rechercher
+     * @return mixed Le livre trouvé ou Status::NOT_FOUND
+     */
     private function getBook($id) {
         return Books::where('isbn', '=', $id)->firstOr(function () {
             return Status::NOT_FOUND;
         });
     }
 
+    /**
+     * Valide les données d'un livre
+     * 
+     * @param Request $request La requête contenant les données à valider
+     * @return mixed true si valide, sinon les erreurs de validation
+     */
     private function validate($request) {
         $validator = Validator::make($request->all(), [
             'isbn' => 'required|unique:books|string|max:255',
@@ -37,13 +51,22 @@ class BooksController extends Controller
         return true;
     }
 
-    // Récupérer la liste de tous les livres.
+    /**
+     * Récupère la liste de tous les livres
+     * 
+     * @return \Illuminate\Http\JsonResponse Liste des livres au format JSON
+     */
     public function index() {
         $books = Books::all();
         return response()->json($books);
     }
 
-    // Récupérer le livre avec l'ID passé en paramètre.
+    /**
+     * Récupère un livre spécifique par son ISBN
+     * 
+     * @param string $id ISBN du livre à récupérer
+     * @return \Illuminate\Http\JsonResponse Données du livre ou message d'erreur
+     */
     public function show($id) {
         $book = $this->getBook($id);
         if($book == Status::NOT_FOUND) return response()->json([
@@ -53,7 +76,12 @@ class BooksController extends Controller
         return response()->json($book);
     }
 
-    // Créer un nouveau livre dans la bdd.
+    /**
+     * Crée un nouveau livre
+     * 
+     * @param Request $request La requête contenant les données du livre
+     * @return \Illuminate\Http\JsonResponse Données du nouveau livre ou erreurs
+     */
     public function store(Request $request) {
         $validated = $this->validate($request);
         if(!$validated) return response()->json($validated, 400);
@@ -72,7 +100,13 @@ class BooksController extends Controller
         return response()->json($book, 201);
     }
 
-
+    /**
+     * Met à jour un livre existant
+     * 
+     * @param Request $request La requête contenant les nouvelles données
+     * @param string $id ISBN du livre à modifier
+     * @return \Illuminate\Http\JsonResponse Données mises à jour ou message d'erreur
+     */
     Public function update(Request $request, $id){
         $validated = $this->validate($request);
         if(!$validated) return response()->json($validated, 400);
@@ -87,6 +121,12 @@ class BooksController extends Controller
         return response()->json($this->getBook($id));
     }
 
+    /**
+     * Supprime un livre
+     * 
+     * @param string $id ISBN du livre à supprimer
+     * @return \Illuminate\Http\JsonResponse Message de confirmation ou d'erreur
+     */
     public function destroy($id) {
         $book = $this->getBook($id);
         if($book == Status::NOT_FOUND) return response()->json([
