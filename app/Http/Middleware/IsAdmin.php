@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class IsAdmin {
 
     public function handle(Request $request, Closure $next): Response {
-        if (Auth::user()->role >= 0) {
+        if (Auth::user()->role >= 2) {
             return $next($request);
         } else {
             return response()->json([
