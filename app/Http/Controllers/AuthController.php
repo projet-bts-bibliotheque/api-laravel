@@ -57,8 +57,8 @@ class AuthController extends Controller {
             'phone' => $request['phone'],
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-        
+        $token = $user->createToken('auth_token', ['*'], now()->addHours(2))->plainTextToken;
+
         event(new Registered($user));
 
         return response()->json([
@@ -76,7 +76,7 @@ class AuthController extends Controller {
 
         $user = User::where('email', $request['email'])->firstOrFail();
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token', ['*'], now()->addHours(2))->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
@@ -157,7 +157,7 @@ class AuthController extends Controller {
             'message' => 'The user has been updated.'
         ], 200);
     }
-    
+
     public function forgotPassword(Request $request) {
         $validate = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
@@ -220,7 +220,7 @@ class AuthController extends Controller {
 
     public function sendVerifyEmail (Request $request) {
         $request->user()->sendEmailVerificationNotification();
-    
+
         return back()->with('message', 'Verification link sent!');
     }
 

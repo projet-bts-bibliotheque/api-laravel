@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
 class IsAdmin {
-    
+
     public function handle(Request $request, Closure $next): Response {
-        if (Auth::user()->role >= 2) {
+        if (Auth::user()->role >= 0) {
             return $next($request);
         } else {
             return response()->json([

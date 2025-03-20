@@ -18,10 +18,10 @@ return new class extends Migration
             $table->float("average_rating");
             $table->integer("ratings_count");
 
-            $table->integer("author");
+            $table->unsignedBigInteger("author");
             $table->foreign("author")->references("id")->on("authors");
 
-            $table->integer("editor");
+            $table->unsignedBigInteger("editor");
             $table->foreign("editor")->references("id")->on("editors");
 
             $table->json("keywords");

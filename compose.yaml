@@ -1,0 +1,43 @@
+services:
+  api:
+    container_name: api
+    build: .
+    ports:
+      - "80:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - PORT=8000
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - laravel
+
+  db:
+    container_name: db
+    image: mysql
+    environment:
+      MYSQL_DATABASE: api
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: R00tP@ssw0rd!#@
+    ports:
+      - "8889:3306"
+    volumes:
+      - pgdata:/var/lib/mysql
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 1s
+      retries: 10
+
+volumes:
+  pgdata: {}
+
+networks:
+  laravel:
