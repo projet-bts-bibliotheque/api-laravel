@@ -2,6 +2,11 @@
 
 set -e
 
+echo "* * * * * sleep 30; cd /var/www/html && php artisan books:check-overdue >> /var/log/cron.log 2>&1" >/etc/cron.d/bookreminders
+chmod 0644 /etc/cron.d/bookreminders
+
+service cron start
+
 php artisan key:generate
 
 check_if_table_is_empty() {
@@ -13,7 +18,7 @@ check_if_table_is_empty() {
     fi
 }
 
-npm install
+npm install 1>&2 2>/dev/null
 
 if check_if_table_is_empty; then
     php artisan migrate:fresh --seed
