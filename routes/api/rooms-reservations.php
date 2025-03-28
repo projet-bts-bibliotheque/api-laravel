@@ -18,7 +18,8 @@ Route::controller(RoomsReservationController::class)->group(function(){
         Route::delete('/reservation/rooms/{reservatioId}','destroy');
 
         Route::middleware("isStaff")->group(function(){
-            
-        })
-    })
-}
+            Route::get('/reservation/rooms/{userId}','showUserReservations');
+
+        });
+    });
+});
