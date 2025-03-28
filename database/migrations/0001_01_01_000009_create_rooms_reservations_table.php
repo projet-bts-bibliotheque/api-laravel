@@ -18,8 +18,8 @@ return new class extends Migration
                   ->constrained()
                   ->onDelete('cascade');
 
-            $table->string('rooms_id');
-            $table->foreign('rooms_id')
+            $table->string('room_id');
+            $table->foreign('room_id')
                 ->references('id')
                 ->on('rooms')
                 ->onDelete('cascade');
