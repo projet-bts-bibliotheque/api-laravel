@@ -15,7 +15,7 @@ class CheckOverdueBooks extends Command
 
     public function handle()
     {
-        $overdueReservations = BooksReservation::where('start', '<', Carbon::now()/*->subMonth()*/)
+        $overdueReservations = BooksReservation::where('start', '<', Carbon::now()->subMonth())
             ->whereNull('return_date')
             ->where('reminder_mail_sent', false)
             ->with(['user', 'book'])

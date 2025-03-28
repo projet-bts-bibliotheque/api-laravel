@@ -12,7 +12,8 @@ class BooksReservationController extends Controller
     
     public function getReservation($userId, $bookId)
     {
-        return BooksReservation::where('user_id', $userId)
+        return BooksReservation::orderBy('id', 'DESC')
+            ->where('user_id', $userId)
             ->where('book_id', $bookId)
             ->first();
     }
@@ -104,8 +105,8 @@ class BooksReservationController extends Controller
         return response()->json($reservation);
     }
 
-    public function destroy($id) {
-        $reservation = $this->getReservation($userId, $bookId);
+    public function destroy($reservationId) {
+        $reservation = BooksReservation::where('id', $reservationId)->get();
         if($reservation === null) {
             return response()->json(['error' => 'Reservation not found'], 404);
         }

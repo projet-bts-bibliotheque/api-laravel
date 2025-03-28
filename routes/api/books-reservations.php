@@ -24,6 +24,8 @@ Route::controller(BooksReservationController::class)->group(function() {
         Route::post('/reservation/books', 'store');
         Route::post('/reservation/books/return', 'returnBook');
 
+        Route::delete('/reservation/books/{reservationId}', 'destroy');
+
         /**
          * Routes réservées au personnel - nécessitent un rôle staff (role >= 1)
          * Permettent les opérations de modification (création, mise à jour, suppression)

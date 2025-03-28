@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 
 class RoomsReservationController extends Controller
 {
-    public fucntion getReservation($userId, $roomId)
+    public function getReservation($userId, $roomId)
     {
-        return RoomsReservation::where('user_id',$userid)
+        return RoomsReservation::orderBy('id', 'DESC')
+            ->where('user_id',$userid)
             ->where('room_id',$roomId)
             ->first();
     }
