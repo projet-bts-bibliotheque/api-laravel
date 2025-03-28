@@ -15,7 +15,7 @@ Route::controller(RoomsReservationController::class)->group(function(){
 
         Route::post('/reservation/rooms', 'store');
         
-        Route::delete('/reservation/rooms/{reservatioId}','destroy');
+        Route::delete('/reservation/rooms/{reservationId}','destroy');
 
         Route::middleware("isStaff")->group(function(){
             Route::get('/reservation/rooms/{userId}','showUserReservations');
