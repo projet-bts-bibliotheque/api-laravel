@@ -18,11 +18,9 @@ return new class extends Migration
                   ->constrained()
                   ->onDelete('cascade');
 
-            $table->string('room_id');
-            $table->foreign('room_id')
-                ->references('id')
-                ->on('rooms')
-                ->onDelete('cascade');
+            $table->foreignId('room_id')
+                    ->constrained()
+                    ->onDelete('cascade');
 
             $table->date('date');
 

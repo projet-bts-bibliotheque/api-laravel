@@ -7,6 +7,7 @@ chmod 0644 /etc/cron.d/bookreminders
 
 service cron start
 
+php artisan migrate
 php artisan key:generate
 
 check_if_table_is_empty() {
