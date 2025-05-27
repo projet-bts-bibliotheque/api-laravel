@@ -97,7 +97,20 @@ class BooksController extends Controller
             'message' => "Author not found"
         ], 404);
 
-        $book = Books::create($request->all());
+        $book = Books::create([
+            'isbn' => $request->isbn,
+            'title' => $request->title,
+            'thumbnail' => $request->thumbnail,
+            'average_rating' => $request->average_rating,
+            'ratings_count' => $request->ratings_count,
+            'author' => $request->author,
+            'editor' => $request->editor,
+            'keywords' => json_encode($request->keyword),
+            'summary' => $request->summary,
+            'pages' => $request->pages,
+            'publish_year' => $request->publish_year
+        ]); 
+
         return response()->json($book, 201);
     }
 
@@ -117,7 +130,19 @@ class BooksController extends Controller
             "message" => "Book not found"
         ], 404);
 
-        Books::where("isbn", "=", $id)->update($request->all());
+        Books::where("isbn", "=", $id)->update([
+            'isbn' => $request->isbn,
+            'title' => $request->title,
+            'thumbnail' => $request->thumbnail,
+            'average_rating' => $request->average_rating,
+            'ratings_count' => $request->ratings_count,
+            'author' => $request->author,
+            'editor' => $request->editor,
+            'keywords' => json_encode($request->keyword),
+            'summary' => $request->summary,
+            'pages' => $request->pages,
+            'publish_year' => $request->publish_year
+        ]);
 
         return response()->json($this->getBook($id));
     }
@@ -134,7 +159,7 @@ class BooksController extends Controller
             "message" => "Book not found"
         ], 404);
 
-        $book->delete();
+        Books::where("isbn", "=", $id)->delete();
 
         return response()->json([
             'message' => 'The book has been deleted.'

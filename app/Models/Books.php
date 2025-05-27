@@ -41,6 +41,7 @@ class Books extends Model
         'editor',
         'keywords',
         'summary',
+        'pages',
         'publish_year'
     ];
 
