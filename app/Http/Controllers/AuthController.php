@@ -76,6 +76,11 @@ class AuthController extends Controller {
             ], 400);
         }
 
+        $role = 0;
+        if (!User::exists()) {
+            $role = 2; // Si c'est le premier utilisateur, il devient administrateur
+        }
+
         $user = User::create([
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],
@@ -83,6 +88,7 @@ class AuthController extends Controller {
             'password' => Hash::make($request['password']),
             'address' => $request['address'],
             'phone' => $request['phone'],
+            'role' => $role,
         ]);
 
         $token = $user->createToken('auth_token', ['*'], now()->addHours(2))->plainTextToken;

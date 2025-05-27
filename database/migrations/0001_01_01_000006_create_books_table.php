@@ -32,6 +32,7 @@ return new class extends Migration
             $table->foreign("editor")->references("id")->on("editors");
 
             $table->json("keywords");  // Mots-clés stockés en format JSON
+            $table->integer('pages'); // Nombre de pages du livre
 
             $table->text("summary");  // Résumé du livre (texte long)
             $table->integer("publish_year");  // Année de publication

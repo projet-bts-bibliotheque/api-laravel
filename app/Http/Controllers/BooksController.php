@@ -34,13 +34,14 @@ class BooksController extends Controller
         $validator = Validator::make($request->all(), [
             'isbn' => 'required|unique:books|string|max:255',
             'title' => 'required|string|max:255',
-            'thumbnails' => 'required|string|max:255',
+            'thumbnail' => 'required|string|max:255',
             'author' => 'required|integer|max:255',
             'editor' => 'required|integer|max:255',
             'average_rating' => 'required|numeric|min:0|max:5',
             'ratings_count' => 'required|integer|min:0',
             'keyword' => 'required|array',
             'summary' => 'required|string|max:500',
+            'pages' => 'required|integer|min:1|max:10000',
             'publish_year' => 'required|integer|min:0|max:9999',
         ]);
 
