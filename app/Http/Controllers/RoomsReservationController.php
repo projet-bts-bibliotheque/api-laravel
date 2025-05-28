@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RoomsReservation;
 use Illuminate\Http\Request;
+use App\Models\RoomsReservation;
+use App\Models\BooksReservation;
 use Illuminate\Support\Facades\Validator;
 
 class RoomsReservationController extends Controller
