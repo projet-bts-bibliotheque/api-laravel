@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RoomsReservation;
-use App\Models\BooksReservation;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class RoomsReservationController extends Controller
 {
     public function getReservation($userId, $roomId)
     {
         return RoomsReservation::orderBy('id', 'DESC')
-            ->where('user_id',$userid)
-            ->where('room_id',$roomId)
+            ->where('user_id', $userId)
+            ->where('room_id', $roomId)
             ->first();
     }
 
@@ -37,7 +37,7 @@ class RoomsReservationController extends Controller
 
     public function index()
     {
-        $reservations = BooksReservation::all();
+        $reservations = RoomsReservation::all();
         return response()->json($reservations);
     }
 
@@ -55,14 +55,14 @@ class RoomsReservationController extends Controller
     {
         $validation = $this->validate($request);
         if($validation !== true) {
-            return response()->json($validation,400);
+            return response()->json($validation, 400);
         }
 
         if(RoomsReservation::where('room_id', $request->room_id)
-            ->Where('date')
+            ->where('date', $request->date)
             ->exists()) {
-            return response()->json(['error' => 'Room is already reserved'], 400);
-            }
+            return response()->json(['error' => 'Room is already reserved for this date'], 400);
+        }
         
         $reservation = RoomsReservation::create([
             'user_id' => Auth::user()->id,
@@ -74,13 +74,12 @@ class RoomsReservationController extends Controller
     }
 
     public function destroy($reservationId) {
-        $reservation = RoomsReservation::where('id',$reservationId)->get();
+        $reservation = RoomsReservation::where('id', $reservationId)->first();
         if($reservation === null) {
             return response()->json(['error' => 'Reservation not found'], 404);
-
         }
 
         $reservation->delete();
-        return reponse()->json(['message' => 'Reseravation deleted']);
+        return response()->json(['message' => 'Reservation deleted']);
     }
 }
