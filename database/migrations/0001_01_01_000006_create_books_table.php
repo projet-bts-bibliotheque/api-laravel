@@ -19,7 +19,7 @@ return new class extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->string("isbn")->primary()->unique();  // ISBN comme clé primaire au lieu d'un ID auto-incrémenté
             $table->string("title");  // Titre du livre
-            $table->string("thumbnail");  // URL ou chemin vers la couverture du livre
+            $table->longText("thumbnail");  // URL ou chemin vers la couverture du livre
             $table->float("average_rating");  // Note moyenne du livre (sur 5)
             $table->integer("ratings_count");  // Nombre total d'évaluations
 
