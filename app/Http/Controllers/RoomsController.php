@@ -19,7 +19,7 @@ class RoomsController extends Controller
      * @return mixed La salle trouvée ou Status::NOT_FOUND
      */
     public function getRoom($id) {
-        return Rooms::where('id', '=', $id)->firtsOr(function() {
+        return Rooms::where('id', '=', $id)->firstOr(function() {
             return Status::NOT_FOUND;
         });
     }
@@ -61,7 +61,7 @@ class RoomsController extends Controller
      */
     public function show($id) {
         $room = $this->getRoom($id);
-        if($room == Status::NOT_FOUND) return response.json([
+        if($room == Status::NOT_FOUND) return response()->json([
             'message' => 'Room not found'
         ], 404);
 
