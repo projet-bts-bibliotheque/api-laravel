@@ -32,7 +32,6 @@ class RoomsController extends Controller
      */
     private function validate($request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|unique:rooms|between:2,100',
             'places' => 'required|integer|min:1',
         ]);
 
@@ -79,7 +78,10 @@ class RoomsController extends Controller
         $validation = $this->validate($request);
         if($validation !== true) return response()->json($validation, 400);
 
-        $room = Rooms::create($request->all());
+        $room = Rooms::create([
+            'places' => $request->places
+        ]);
+
         return response()->json($room, 201);
     }
 
@@ -99,7 +101,10 @@ class RoomsController extends Controller
             'message' => 'Room not found'
         ], 404);
 
-        $room->update($request->all());
+        $room->update([
+            'places' => $request->places
+        ]);
+
         return response()->json($room);
     }
 
@@ -116,6 +121,7 @@ class RoomsController extends Controller
         ], 404);
 
         $editor->delete();
+        
         return response()->json([
             'message' => 'Room deleted'
         ]);

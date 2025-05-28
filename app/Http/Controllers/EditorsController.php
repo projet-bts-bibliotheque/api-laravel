@@ -77,7 +77,10 @@ class EditorsController extends Controller
         $validated = $this->validate($request);
         if(!$validated) return response()->json($validated, 400);
 
-        $editor = Editors::create($request->all());
+        $editor = Editors::create([
+            'name' => $request->name,
+        ]);
+
         return response()->json($editor, 201);
     }
 
@@ -97,7 +100,10 @@ class EditorsController extends Controller
             "message" => "Editor not found"
         ], 404);
 
-        $editor->update($request->all());
+        $editor->update([
+            'name' => $request->name,
+        ]);
+
         return response()->json($editor);
     }
 
