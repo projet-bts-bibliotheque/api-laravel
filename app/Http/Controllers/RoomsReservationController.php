@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RoomsReservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoomsReservationController extends Controller
 {
