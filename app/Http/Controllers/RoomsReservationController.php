@@ -59,7 +59,7 @@ class RoomsReservationController extends Controller
         }
 
         if(RoomsReservation::where('room_id', $request->room_id)
-            ->where('date', $request->date)
+            ->where('date', $request->date('date')->addDays(1))
             ->exists()) {
             return response()->json(['error' => 'Room is already reserved for this date'], 400);
         }
@@ -67,7 +67,7 @@ class RoomsReservationController extends Controller
         $reservation = RoomsReservation::create([
             'user_id' => Auth::user()->id,
             'room_id' => $request->room_id,
-            'date' => $request->date,
+            'date' => $request->date('date')->addDays(1),
         ]);
 
         return response()->json($reservation, 201);
