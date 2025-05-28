@@ -23,7 +23,6 @@ class RoomsReservationController extends Controller
 
     private function validate($request){
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
             'room_id' => 'required|exists:rooms,id',
             'date' => 'required|date'
         ]);
