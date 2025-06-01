@@ -29,6 +29,8 @@ Route::controller(AuthController::class)->group(function() {
     Route::post("/forgot-password", "forgotPassword");  // Demande de réinitialisation de mot de passe
     Route::post("/reset-password", "resetPassword");  // Confirmation de réinitialisation avec nouveau mot de passe
 
+    Route::get('/email/verify/{id}/{hash}', "verifyEmail")->name('verification.verify');
+
     /**
      * Routes protégées - nécessitent une authentification via Sanctum
      */
@@ -42,7 +44,6 @@ Route::controller(AuthController::class)->group(function() {
          * La route d'envoi est limitée à 6 requêtes par minute (protection contre les abus)
          */
         Route::post('/email/verification-notification', "sendVerifyEmail")->middleware(['throttle:6,1'])->name('verification.send');
-        Route::get('/email/verify/{id}/{hash}', "verifyEmail")->name('verification.verify');
 
         /**
          * Routes réservées au personnel - nécessitent un rôle staff (role >= 1)
